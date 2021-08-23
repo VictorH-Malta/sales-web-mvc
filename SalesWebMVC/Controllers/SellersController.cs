@@ -27,6 +27,7 @@ namespace SalesWebMVC.Controllers
             return View();
         }
 
+        //Para que identifique como um método POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Seller seller)
