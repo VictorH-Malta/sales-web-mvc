@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SalesWebMVC.Models;
 using SalesWebMVC.Models.Services;
+using SalesWebMVC.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,20 +12,27 @@ namespace SalesWebMVC.Controllers
     public class SellersController : Controller
     {
         private readonly SellerService _sellerService;
+        private readonly DepartmentService _deparmentService;
 
-        public SellersController(SellerService sellerService)
+        public SellersController(SellerService sellerService, DepartmentService departmentService)
         {
             _sellerService = sellerService;
+            _deparmentService = departmentService;
         }
+
+        //Renderiza na tela a lista de vendedores no banco de dados
         public IActionResult Index()
         {
             var list = _sellerService.FindAll();
             return View(list);
         }
 
+        //É um GET
         public IActionResult Create()
         {
-            return View();
+            var departments = _deparmentService.FindAll();
+            var viewModel = new SellerFormViewModel { Departments = departments };
+            return View(viewModel);
         }
 
         //Para que identifique como um método POST
