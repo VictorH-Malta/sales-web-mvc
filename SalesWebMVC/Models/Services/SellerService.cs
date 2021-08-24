@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SalesWebMVC.Models.Services.Exceptions;
 
 namespace SalesWebMVC.Models.Services
 {
@@ -39,6 +40,27 @@ namespace SalesWebMVC.Models.Services
         {
             _context.Add(obj);
             _context.SaveChanges();
+        }
+
+        public void Update(Seller obj)
+        {
+            //Confere se não existe o Id do vendedor em questão
+            if (!_context.Seller.Any(x => x.Id == obj.Id))
+            {
+                throw new NotFoundException("Id not found");
+            }
+            try
+            {
+                _context.Update(obj);
+                _context.SaveChanges();
+            }
+            //Estamos fazendo algo importante aqui, transformando uma exceção de acesso à dados em uma excessão da camada de serviço, fazendo com que se mantenha e se respeite a ordem
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbConcurrencyException(e.Message);
+            }
+
+
         }
     }
 }
